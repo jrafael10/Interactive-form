@@ -346,6 +346,11 @@ const validateMail = /^[^@]+@[^@.]+\.[a-z]+$/i.test(email)
         $('.invalidCreditCard').hide();
     }
 
+    if(cardNumber.length === 0) {
+        $('.invalidCreditCard').text('Please enter your credit card number.').show();
+        
+    } 
+
     return ccNum;
 }
 
@@ -359,6 +364,10 @@ function validateZipCode(zipCode){
         $('#zip').focus();
      } else {
          $('.invalidZipCode').hide();
+     }
+
+     if(zipCode.length === 0){
+        $('.invalidZipCode').text('Please enter your zip code').show();
      }
 
      return zCode;
@@ -394,29 +403,54 @@ function validateAllFields() {
     const zip = $('#zip').val();
     const cvv = $('#cvv').val();
 
+    let valid = false;
+
     
 
     //the default payment method is credit card
     if(selectedMethod === 'credit card' || selectedMethod === 'select_method'){
-      //check all the required   fields if user selects
-      //credit card as the selected payment method
-    return validateNameField($name) && 
-    validateEmailAdd($email)&&
-     validateActivities()&&
-     validateCreditCardNum(creditCardNum) &&
-     validateZipCode(zip) &&
+//Calling all the functions that handle the validity of the required fields
+    //to display the at least one error message of those invalid fields.
+     validateNameField($name); 
+    validateEmailAdd($email);
+     validateActivities();
+     validateCreditCardNum(creditCardNum);
+     validateZipCode(zip) ;
      validateCvv(cvv);
 
+     //check all the required   fields if user selects
+      //credit card as the selected payment method
+      if(
+        validateNameField($name) &&
+        validateEmailAdd($email) &&
+         validateActivities() &&
+         validateCreditCardNum(creditCardNum) &&
+         validateZipCode(zip) &&
+         validateCvv(cvv)
+        ) {
+            valid = true;
+        } else {
+              valid = false;
+        }
+    
 
      //if the user selects a payment method that is not credit card,
      //only the name, email address, and selected activity/activities
      //will be validated.
    }else {
-    return validateNameField($name) && 
-    validateEmailAdd($email)&&
+
+    validateNameField($name); 
+    validateEmailAdd($email); 
     validateActivities();
+    if( validateNameField($name) && 
+    validateEmailAdd($email)&&
+    validateActivities()) {
+        valid = true;
+    } else {
+        valid = false;
+    }
    }
-   //return valid;
+   return valid;
     
     
 }
@@ -514,11 +548,6 @@ $('button').on('click', function(e){
        $('form').submit();
     }
 })
-
-
-
-
- 
 
 
 
